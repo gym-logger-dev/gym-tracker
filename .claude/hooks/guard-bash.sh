@@ -12,7 +12,7 @@ deny() { echo "Blocked: $1 If this is genuinely needed, raise an open item for S
 shopt -s nocasematch
 [[ "$cmd" =~ (^|[;&|[:space:]])rm[[:space:]]+-[a-z]*r[a-z]*f|rm[[:space:]]+-[a-z]*f[a-z]*r ]] && deny "recursive force delete."
 [[ "$cmd" =~ git[[:space:]]+push.*(--force|-f([[:space:]]|$)|--force-with-lease) ]] && deny "force push."
-[[ "$cmd" =~ git[[:space:]]+push[[:space:]]+[^[:space:]]+[[:space:]]+(HEAD:)?(main|master)([[:space:]]|$) ]] && deny "push to main."
+[[ "$cmd" =~ git[[:space:]]+push([[:space:]]+-[^[:space:]]+)*[[:space:]]+[^[:space:]]+[[:space:]]+([^[:space:]:]+:)?(main|master)([[:space:]]|$) ]] && deny "push to main."
 [[ "$cmd" =~ git[[:space:]]+(reset[[:space:]]+--hard|clean[[:space:]]+-[a-z]*f|branch[[:space:]]+-D) ]] && deny "history- or work-destroying git command."
 [[ "$cmd" =~ gh[[:space:]]+pr[[:space:]]+merge.*--admin ]] && deny "bypassing branch protection."
 [[ "$cmd" =~ gh[[:space:]]+pr[[:space:]]+merge ]] && [[ ! "$cmd" =~ --squash ]] && deny "merges must be squash merges via the merge rules in lead.md."
@@ -28,4 +28,6 @@ shopt -s nocasematch
 [[ "$cmd" =~ gh[[:space:]]+auth[[:space:]]+(login|logout|refresh|token|switch) ]] && deny "the agents' GitHub identity is set up by Sev."
 [[ "$cmd" =~ git[[:space:]]+config.*(--global|--system|user\.name|user\.email|credential) ]] && deny "git identity and credentials are set up by Sev."
 [[ "$cmd" =~ (GH_TOKEN|GITHUB_TOKEN|NTFY_TOPIC) ]] && deny "referencing tokens or alert topics in commands."
+[[ "$cmd" =~ settings\.local\.json ]] && deny "the local settings file holds tokens."
+[[ "$cmd" =~ /proc/[^[:space:]]*/environ ]] && deny "reading process environments."
 exit 0
