@@ -19,6 +19,7 @@ jobs:
       - run: npm ci
         if: hashFiles('package-lock.json') != ''
       - run: npm run verify --if-present
+        if: hashFiles('package.json') != ''
       - uses: supabase/setup-cli@v1
         if: hashFiles('supabase/config.toml') != ''
       - name: RLS tests
