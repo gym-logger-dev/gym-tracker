@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0",
+    "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS": "1"
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm test *)",
+      "Bash(npx expo *)",
+      "Bash(npx jest *)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx prettier *)",
+      "Bash(npx drizzle-kit *)",
+      "Bash(maestro test *)",
+      "Bash(supabase start)",
+      "Bash(supabase stop)",
+      "Bash(supabase status)",
+      "Bash(supabase test db *)",
+      "Bash(supabase migration new *)",
+      "Bash(supabase db reset)",
+      "Bash(supabase db diff *)",
+      "Bash(supabase functions serve *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git switch *)",
+      "Bash(git checkout -b *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git fetch *)",
+      "Bash(git pull --ff-only *)",
+      "Bash(git push -u origin story/*)",
+      "Bash(git push origin story/*)",
+      "Bash(git worktree *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr comment *)",
+      "Bash(gh pr edit * --add-label review:approved*)",
+      "Bash(gh pr edit * --add-label compliance:approved*)",
+      "Bash(gh pr merge * --squash --delete-branch)",
+      "Bash(gh issue create *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue comment *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "WebFetch(domain:docs.expo.dev)",
+      "WebFetch(domain:supabase.com)",
+      "WebFetch(domain:reactnative.dev)",
+      "WebFetch(domain:developers.strava.com)",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:modelcontextprotocol.io)",
+      "WebFetch(domain:www.oaic.gov.au)",
+      "WebFetch(domain:www.tga.gov.au)",
+      "WebFetch(domain:developer.apple.com)",
+      "WebFetch(domain:support.google.com)",
+      "WebFetch(domain:developer.android.com)"
+    ],
+    "ask": [
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Bash(npx expo install *)",
+      "Bash(eas build *)",
+      "Bash(eas update *)",
+      "Bash(git push *)",
+      "WebSearch"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.p8)",
+      "Read(./**/*.keystore)",
+      "Edit(./.claude/**)",
+      "Edit(./CLAUDE.md)",
+      "Edit(./docs/dev-plan.md)",
+      "Edit(./docs/agent-team-plan.md)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push origin main*)",
+      "Bash(git reset --hard*)",
+      "Bash(gh pr merge * --admin*)",
+      "Bash(gh pr edit * sev-approved*)",
+      "Bash(gh label *)",
+      "Bash(gh secret *)",
+      "Bash(gh repo delete *)",
+      "Bash(eas submit*)",
+      "Bash(eas credentials*)",
+      "Bash(eas secret*)",
+      "Bash(supabase link*)",
+      "Bash(supabase db push*)",
+      "Bash(supabase secrets*)",
+      "Bash(supabase functions deploy*)",
+      "Bash(npm publish*)",
+      "Bash(printenv*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-protected.sh" }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-bash.sh" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format.sh" },
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/alert-open-item.sh" }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/notify.sh" }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "matcher": "rate_limit",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/notify.sh" }
+        ]
+      }
+    ]
+  }
+}

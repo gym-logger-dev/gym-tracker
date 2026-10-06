@@ -1,0 +1,7 @@
+{
+  "env": {
+    "GH_TOKEN": "github_pat_for_the_bot_account_only",
+    "NTFY_TOPIC": "replace-with-a-long-random-topic-name",
+    "NTFY_SERVER": "https://ntfy.sh"
+  }
+}

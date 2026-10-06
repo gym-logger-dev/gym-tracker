@@ -1,0 +1,9 @@
+# Sev is notified (review requested) on changes to guardrails, CI, migrations and plans.
+# Replace sev-kz15 with your own GitHub username. Do NOT enable
+# "Require review from Code Owners" — merging is delegated; merge-gate enforces sev-approved.
+/.claude/                 @sev-kz15
+/.github/                 @sev-kz15
+/supabase/migrations/     @sev-kz15
+/CLAUDE.md                @sev-kz15
+/docs/dev-plan.md         @sev-kz15
+/docs/agent-team-plan.md  @sev-kz15

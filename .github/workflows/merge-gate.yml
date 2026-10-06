@@ -1,0 +1,42 @@
+name: merge-gate
+# Enforces the team's merge rules as a required status check.
+# - Every PR needs label review:approved.
+# - PRs labelled data/auth/health/integration/migration also need compliance:approved.
+# - PRs touching workflows, migrations or app permissions, or labelled needs-sev, need sev-approved (Sev only).
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+jobs:
+  merge-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check labels and paths
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          SEV_LOGIN: ${{ vars.SEV_LOGIN }}
+        run: |
+          labels="$(gh pr view "$PR" -R "$REPO" --json labels -q '.labels[].name')"
+          files="$(gh pr view "$PR" -R "$REPO" --json files -q '.files[].path')"
+          has() { grep -qx "$1" <<< "$labels"; }
+          fail=0
+          has review:approved || { echo "::error::Missing review:approved (code-reviewer APPROVE)"; fail=1; }
+          if grep -qxE 'data|auth|health|integration|migration' <<< "$labels"; then
+            has compliance:approved || { echo "::error::Missing compliance:approved for a sensitive story"; fail=1; }
+          fi
+          # sev-approved only counts if the most recent time it was applied, the actor was Sev (repo variable SEV_LOGIN).
+          sev_ok() {
+            has sev-approved || return 1
+            actor="$(gh api "repos/$REPO/issues/$PR/events" --paginate \
+              -q '[.[] | select(.event=="labeled" and .label.name=="sev-approved")] | last | .actor.login')"
+            [ -n "$SEV_LOGIN" ] && [ "$actor" = "$SEV_LOGIN" ]
+          }
+          if has needs-sev || grep -qE '^(\.github/workflows/|supabase/migrations/|app\.config\.ts$|\.claude/|CLAUDE\.md$|docs/(dev-plan|agent-team-plan)\.md$)' <<< "$files"; then
+            sev_ok || { echo "::error::This PR needs the sev-approved label, applied by $SEV_LOGIN"; fail=1; }
+          fi
+          exit $fail
