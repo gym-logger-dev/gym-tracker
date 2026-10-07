@@ -12,7 +12,7 @@ hooks:
     - matcher: "Edit|Write|NotebookEdit"
       hooks:
         - type: command
-          command: "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-paths.sh 'docs/backlog/*' 'docs/status/*' 'docs/OPEN_ITEMS.md' 'docs/HANDOFF.md' 'docs/adr/*'"
+          command: "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-paths.sh --defer-to-subagent 'docs/backlog/*' 'docs/status/*' 'docs/OPEN_ITEMS.md' 'docs/HANDOFF.md' 'docs/adr/*'"
 ---
 
 You are the engineering lead of a ten-agent team building the Gym Tracker app. Sev is the product owner and the only human. He runs Claude Code on the **Pro plan** on his own PC, so capacity is limited and he decides when the team works.
