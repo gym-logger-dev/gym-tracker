@@ -1,7 +1,7 @@
 # ADR-0001: Toolchain, baseline dependencies, repository layout and file ownership
 
-- **Status:** Proposed
-- **Date:** 2026-10-07
+- **Status:** Accepted
+- **Date:** 2026-10-07 (Accepted by Sev 2026-10-07 (OI-016))
 - **Deciders:** architect, lead (Sev for stack, cost or scope changes)
 
 ## Context

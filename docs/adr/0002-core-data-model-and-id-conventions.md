@@ -1,8 +1,8 @@
 # ADR-0002: Core data model, ID conventions, import provenance and RLS shape
 
-- **Status:** Proposed
-- **Date:** 2026-10-07
-- **Deciders:** architect, lead (Sev for items marked "Assumption (Sev to confirm, reversible)")
+- **Status:** Accepted
+- **Date:** 2026-10-07 (Accepted by Sev 2026-10-07 (OI-016))
+- **Deciders:** architect, lead (Sev for items marked "Assumption (approved with ADR-0002 by Sev 2026-10-07 (OI-016), not individually confirmed; reversible)")
 
 ## Context
 
@@ -60,7 +60,7 @@ Each decision states the chosen option, alternatives and consequences. "Required
   - `exercise`: `name` text not null, `muscle_group` text nullable (free text, with a suggested list in contracts, no database enum so new values need no migration), `equipment_increment_kg` numeric nullable. Unique on `(user_id, lower(name))` over live rows (STORY-006 criterion 4).
   - `variant`: a flat, per-user list of tags (`name`), not a child of `exercise`. A set carries `variant_id` nullable. Unique on `(user_id, lower(name))` over live rows.
   - `gym`: a flat, user-owned list (`name`), no hard-coded names in schema, seeds or fixtures (public repo). A session carries `gym_id` nullable. Unique on `(user_id, lower(name))` over live rows.
-  - Assumption (Sev to confirm, reversible): the Notion "Variant" tag is a tag applied across exercises (for example "paused" or "wide grip") rather than a list that belongs to each exercise. Global tags allow one filter on charts across exercises (W2) and one import lookup. If the Notion variants are in fact per-exercise, add a nullable `exercise_id` to `variant` later (additive migration) and keep the same ids.
+  - Assumption (approved with ADR-0002 by Sev 2026-10-07 (OI-016), not individually confirmed; reversible): the Notion "Variant" tag is a tag applied across exercises (for example "paused" or "wide grip") rather than a list that belongs to each exercise. Global tags allow one filter on charts across exercises (W2) and one import lookup. If the Notion variants are in fact per-exercise, add a nullable `exercise_id` to `variant` later (additive migration) and keep the same ids.
 - **Alternatives:** variant as a child of exercise (duplicates "wide grip" per exercise and needs the importer to guess the owner); variant as a free-text column on `set` (no rename, no filter, case drift); gym as an enum or seeded list (real gym names are user data).
 - **Consequences:** `session.gym_id` and `set.variant_id` can be null (unknown), and the importer never invents a gym or variant. Renaming a variant or gym changes every row that uses it; historic charts relabel, which is the desired behaviour.
 - Required by: STORY-006, 007, 015.
@@ -83,7 +83,7 @@ Each decision states the chosen option, alternatives and consequences. "Required
 ### D7. Representation of historical entries (sessions without times)
 - **Chosen:** one synthetic session per `(session_date, gym)` with `source = 'notion_import'`; `started_at` = 00:00 on that date in Australia/Adelaide converted to UTC (midnight always exists in Adelaide, daylight saving changes occur at 02:00, but DST-boundary dates are still tested, STORY-015 criterion 9); `ended_at` null; `session_date` = that date; `gym_id` null when the entry has no gym; sets have `completed_at` null. Session id is the v5 id from D1. Several entries on the same date and gym fall into the same session; sets of the same exercise from different entries are numbered `set_order` consecutively in source row order (the importer sorts entries by source row sequence, so the numbering is deterministic).
   - Missing fields are never dropped silently: no reps becomes no set plus a review flag; no variant or no gym stays null; no date means the entry cannot be placed in a session, so no session or sets are created, and the entry is kept in `import_entry` with `needs_review` and reason `missing_date` (D9). An entry with an unknown exercise name creates the exercise from the name (flag `unknown_exercise` only if the exercise export does not contain it); a blank exercise name creates no sets (`missing_exercise`).
-  - Assumption (Sev to confirm, reversible): grouping by (date, gym) and the midnight placeholder start are the architect's recommended default from STORY-005, not something Sev has confirmed. Reversible because deterministic ids and the immutable raw text allow a re-import with another grouping.
+  - Assumption (approved with ADR-0002 by Sev 2026-10-07 (OI-016), not individually confirmed; reversible): grouping by (date, gym) and the midnight placeholder start are the architect's recommended default from STORY-005, not something Sev has confirmed. Reversible because deterministic ids and the immutable raw text allow a re-import with another grouping.
 - **Alternatives:** one session per entry (date plus exercise): shatters a workout into many sessions and breaks per-session charts; one session per date regardless of gym (loses gym split); placeholder date for undated entries (invents data).
 - **Consequences:** history behaves like ordinary sessions in prefill and charts (STORY-019). Two training blocks on the same date at the same gym merge into one session, an accepted loss of time information that the data never had.
 - Required by: STORY-005 criterion 5, STORY-007, 015, 016.
@@ -97,7 +97,7 @@ Each decision states the chosen option, alternatives and consequences. "Required
 
 ### D9. Import provenance: `import_entry`
 - **Chosen:** a server-only table (not synced, absent from the device schema) with one row per source entry, never overwritten:
-  - `id` (v5, D1), `user_id`, `created_at`; `import_batch_id` uuid (v7, one per run), `source_system` text (`notion_csv`), `source_row_id` text not null (the Notion page id if the export contains one; otherwise `row-<n>`, the 1-based data row number; Assumption (Sev to confirm, reversible): the real export's identifier column is unknown until OI-003), `raw_date` text nullable, `raw_sets` text nullable (null means the cell was absent; empty string means present and empty), `raw_fields` jsonb not null (every other source column verbatim, for example exercise, variant, gym, notes), `parsed_set_count` integer not null (sets recognised), `session_id` and `exercise_id` nullable (composite FKs), `needs_review` boolean not null default false, `review_reasons` text[] not null default empty, `reviewed_at` timestamptz nullable.
+  - `id` (v5, D1), `user_id`, `created_at`; `import_batch_id` uuid (v7, one per run), `source_system` text (`notion_csv`), `source_row_id` text not null (the Notion page id if the export contains one; otherwise `row-<n>`, the 1-based data row number; Assumption (approved with ADR-0002 by Sev 2026-10-07 (OI-016), not individually confirmed; reversible): the real export's identifier column is unknown until OI-003), `raw_date` text nullable, `raw_sets` text nullable (null means the cell was absent; empty string means present and empty), `raw_fields` jsonb not null (every other source column verbatim, for example exercise, variant, gym, notes), `parsed_set_count` integer not null (sets recognised), `session_id` and `exercise_id` nullable (composite FKs), `needs_review` boolean not null default false, `review_reasons` text[] not null default empty, `reviewed_at` timestamptz nullable.
   - Reason codes (enumerated in contracts, not as a database check, so adding one needs no migration): `missing_date`, `missing_exercise`, `unknown_exercise`, `empty_sets`, `unparsed_token`, `no_weight`, `duplicate_source_row`.
   - Immutability: a trigger rejects any update to `source_system`, `source_row_id`, `raw_date`, `raw_sets`, `raw_fields` and `parsed_set_count`; only `reviewed_at` (Sev's acceptance, STORY-016 criterion 5) may change. Raw text is `text`, never trimmed or normalised (byte-for-byte, STORY-007 criterion 7). Triggers never log row contents.
   - Reconciliation (STORY-016) recomputes the set ids `set|<user>|<import_entry id>|k` for k = 1 to `parsed_set_count` and compares existence, weight and reps against the parsed raw text; no extra column on `set` is needed.
@@ -107,7 +107,7 @@ Each decision states the chosen option, alternatives and consequences. "Required
 - Required by: STORY-007, 015, 016, 017.
 
 ### D10. Sets text parsing rule (`45x10, 9, 8`)
-- **Assumption (Sev to confirm, reversible):** inferred from the dev-plan example; real strings arrive with OI-003. Grammar for the `Sets` cell, applied by `parseSets` (STORY-014), tokens separated by commas, spaces optional:
+- **Assumption (approved with ADR-0002 by Sev 2026-10-07 (OI-016), not individually confirmed; reversible):** inferred from the dev-plan example; real strings arrive with OI-003. Grammar for the `Sets` cell, applied by `parseSets` (STORY-014), tokens separated by commas, spaces optional:
   1. `WxR` (also `W x R`, `X` accepted): W is a decimal weight in kg, R a non-negative integer of reps. Creates a set and sets the carried weight to W.
   2. A bare integer `R`: creates a set with reps R at the carried weight. If no weight has been carried yet, the weight is null and the warning `no_weight` is raised.
   3. Any other token (for example `abc`, `45lb`, `BW`, `8-10`, `40x8x3`, a drop-set notation) creates no set, raises `unparsed_token` with the token position, and resets the carried weight to null, so a later bare reps token gets a null weight and a `no_weight` warning rather than a guessed weight.
@@ -141,12 +141,13 @@ Each decision states the chosen option, alternatives and consequences. "Required
 
 ### D14. Local database model and user scoping
 - **Chosen:** `src/db/schema.ts` (Drizzle, SQLite) mirrors exercise, variant, gym, session, set with the same column names and nullability; `plan`, `plan_day`, `consent`, `body_scan` arrive when their features do; `import_entry` is never on the device. Every local row has `user_id` NOT NULL. The user must sign in before the first use of the app: the app never writes a row without a user id and there is no anonymous local mode. All local queries filter by the signed-in `user_id` (STORY-019 criterion 8).
-  - Assumption (Sev to confirm; hard to reverse once real data exists): sign-in before first use is acceptable for a product that already requires an account (dev plan, Auth).
+  - Assumption (confirmed by Sev 2026-10-07 (OI-016); hard to reverse once real data exists): sign-in before first use is acceptable for a product that already requires an account (dev plan, Auth).
   - Reason: deterministic ids (D1, D8) embed `user_id`; backfilling a null `user_id` after sign-in would change those ids and break idempotent import and implicit-session merging.
   - Consistency between layers: `packages/contracts` (zod) is the single field list. Two automated checks: a unit test comparing `src/db/schema.ts` columns, nullability and types with the contracts (STORY-013 criterion 1), and a database test (pgTAP or integration test, qa-engineer) comparing the migrated Postgres columns with the contracts through catalog queries, so drift in either layer fails `verify`.
   - Consequences for stories: STORY-013 criterion 10 changes to "user_id NOT NULL; signed-in user's id". The first launch requires the network once (magic link), after which the persisted session works offline; any later switch of signed-in user keeps the previous user's encrypted rows on the device but invisible until the auth ADR defines purge on sign-out.
 - **Alternatives:** nullable `user_id` until sign-in with backfill (breaks v5 ids); a fixed local placeholder user id then remap (same problem plus a migration of every key).
 - **Consequences:** no "try before sign-in" mode; a hard-to-reverse choice, so recorded here deliberately (see open question Q4).
+  - Sign-in method (OI-016 follow-up, 2026-10-07): email only, no Apple or Google sign-in (STORY-011 dropped). STORY-025 (account deletion) relies on the D2 cascade.
 - Required by: STORY-013, 019, 021.
 
 ### D15. Contracts
@@ -187,4 +188,4 @@ Import entry `fake-row-0001`: exercise "Example Bench Press", gym "Example Gym A
   3. The architect writes migrations and `packages/contracts` in STORY-005 to 008; qa-engineer adds the catalog and "composite FK" meta-tests in STORY-009.
   4. The P2 sync ADR confirms last-write-wins by server `updated_at`, name-collision resolution and `set_order` renumbering.
 - Reversing: additive changes (new nullable columns, new tables, new enum values by migration) are cheap. Hard to reverse once real data exists: the v5 namespace and name formats, the use of `user_id` in v5 names, and local `user_id` NOT NULL. Variant-as-tag and the Sets grammar are reversible (additive column, importer re-run by deterministic ids after correcting raw reading, because raw text is kept).
-- Open questions for Sev (all with a safe default; none blocks migrations if the default is accepted): see the architect's report and the OPEN_ITEMS register; summary: Q1 Sets grammar and unknown-token reset (D10), Q2 variant as global tag (D4), Q3 midnight-Adelaide placeholder start and (date, gym) grouping (D7), Q4 sign-in required before first use (D14), Q5 `source_row_id` fallback when the export has no Notion page id (D9).
+- Open questions for Sev (Q4 confirmed by Sev 2026-10-07 (OI-016); Q1-Q3 and Q5 approved with the ADR as a whole, not individually confirmed (OI-016); originally each had a safe default; none blocks migrations): see the architect's report and the OPEN_ITEMS register; summary: Q1 Sets grammar and unknown-token reset (D10), Q2 variant as global tag (D4), Q3 midnight-Adelaide placeholder start and (date, gym) grouping (D7), Q4 sign-in required before first use (D14), Q5 `source_row_id` fallback when the export has no Notion page id (D9).

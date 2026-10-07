@@ -1,6 +1,6 @@
 # STORY-008: Migration: plan, plan_day and consent tables
 
-- **Status:** Ready, start only after Sev confirms assumption (d) sign-in before first use (OI-016)
+- **Status:** Ready ((d) sign-in before first use confirmed 2026-10-07, OI-016)
 - **Phase / workstream / obligations:** P1 · W4 (plan storage, used from P4), W1 · R2 (consent record shape), R3
 - **Labels:** data, migration, needs-sev
 - **Needs Sev approval label (sev-approved):** this PR touches `supabase/migrations/`, which `.github/workflows/merge-gate.yml` guards; `merge-gate` blocks until Sev applies `sev-approved` himself.

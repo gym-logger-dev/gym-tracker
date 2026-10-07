@@ -1,6 +1,6 @@
 # STORY-006: Migration: exercise, variant, gym tables
 
-- **Status:** Ready, start only after Sev confirms assumption (d) sign-in before first use (OI-016)
+- **Status:** Ready ((d) sign-in before first use confirmed 2026-10-07, OI-016)
 - **Phase / workstream / obligations:** P1 · W1 · R3 (structured, exportable data)
 - **Labels:** data, migration, needs-sev
 - **Needs Sev approval label (sev-approved):** this PR touches `supabase/migrations/`, which `.github/workflows/merge-gate.yml` guards; `merge-gate` blocks until Sev applies `sev-approved` himself.

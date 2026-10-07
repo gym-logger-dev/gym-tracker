@@ -18,12 +18,12 @@ Still open: OI-017. Its defaults apply and are marked "default, OI-017 open" bel
 | 4 | STORY-004 | Local Supabase config | data | Ready (parts A-D by four owners, lead-coordinated) | 001 |
 | 5 | STORY-002 | Expo app shell | ui, needs-sev | Ready | 001 |
 | 6 | STORY-003 | Theme tokens stub | ui | Ready | 002 |
-| 7 | STORY-006 | Migration: reference tables | data, migration, needs-sev | Ready, start after Sev confirms OI-016 (d) | 004, 005 |
-| 8 | STORY-007 | Migration: session, set, provenance | data, migration, needs-sev | Ready, start after Sev confirms OI-016 (d) | 004, 005, 006 |
-| 9 | STORY-008 | Migration: plan, plan_day, consent | data, migration, needs-sev | Ready, start after Sev confirms OI-016 (d) | 004, 005, 007 |
+| 7 | STORY-006 | Migration: reference tables | data, migration, needs-sev | Ready ((d) confirmed 2026-10-07, OI-016) | 004, 005 |
+| 8 | STORY-007 | Migration: session, set, provenance | data, migration, needs-sev | Ready ((d) confirmed 2026-10-07, OI-016) | 004, 005, 006 |
+| 9 | STORY-008 | Migration: plan, plan_day, consent | data, migration, needs-sev | Ready ((d) confirmed 2026-10-07, OI-016) | 004, 005, 007 |
 | 10 | STORY-009 | RLS policies + pgTAP deny suite | data, auth, migration, needs-sev | Ready | 004, 006, 007, 008 |
 | 11 | STORY-012 | Local encrypted DB (SQLCipher) | data | Draft | 002, ADR-0003 |
-| 12 | STORY-013 | Drizzle local schema | data | Ready, start after Sev confirms OI-016 (d); also waits for 012 and ADR-0003 | 005, 012 |
+| 12 | STORY-013 | Drizzle local schema | data | Ready ((d) confirmed 2026-10-07, OI-016); also waits for 012 and ADR-0003 | 005, 012 |
 | 13 | STORY-010 | Auth magic link | auth, ui | Draft | 002, 003, 004, 009, ADR auth client |
 | 14 | STORY-018 | Quick Log stepper | ui | Ready | 003 |
 | 15 | STORY-019 | Quick Log pre-fill query | data | Ready | 013 |
@@ -37,11 +37,15 @@ Still open: OI-017. Its defaults apply and are marked "default, OI-017 open" bel
 | 23 | STORY-022 | Quick Log sparkline (optional) | ui | Draft; P3 (default, OI-017 open) | 021 |
 | 24 | STORY-024 | P1 phase gate | data, auth, needs-sev | Draft | 000-023 except 011 (Dropped); 017, 022 may be deferred; Sev sign-off |
 
-## P2 (proposed, not in P1 order)
+## P2 (not in P1 order)
 
 | ID | Title | Labels | Status | Depends on |
 |---|---|---|---|---|
-| STORY-025 | Account deletion (in-app, purges server and device data) | auth, data, ui, needs-sev | Draft; phase placement is a scope question for Sev (dev-plan lists deletion at P5) | 006, 007, 008, 009, 010; ADR deletion path |
+| STORY-025 | Account deletion (in-app, purges server and device data) | auth, data, ui, needs-sev | Draft; P2 confirmed by Sev (OI-019); deviation from dev-plan (R9 at P5) recorded in OPEN_ITEMS and status report | 006, 007, 008, 009, 010; ADR deletion path (incl. recency verification) |
+
+## Later / P5
+- Check Supabase plan backup retention for deleted data before the privacy policy goes public (OI-020). Any retention sentence in policy or UI must come from that check. Owner: security-compliance; Sev supplies plan details.
+- Verify current Apple 5.1.1(v), Google Play account-deletion and APP 11.2 wording before submission (from memory, not certified).
 
 ## Dropped
 - STORY-011 Apple/Google sign-in: Dropped (Sev 2026-10-07: email-only sign-in). File kept for traceability.

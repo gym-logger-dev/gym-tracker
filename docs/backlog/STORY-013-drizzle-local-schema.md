@@ -1,6 +1,6 @@
 # STORY-013: Drizzle local schema mirroring the server model
 
-- **Status:** Ready, start only after Sev confirms assumption (d) sign-in before first use (OI-016); also waits for STORY-012 and ADR-0003 (SQLCipher, key storage, UUID library)
+- **Status:** Ready ((d) sign-in before first use confirmed 2026-10-07, OI-016); also waits for STORY-012 and ADR-0003 (SQLCipher, key storage, UUID library)
 - **Phase / workstream / obligations:** P1 · W1 · R3
 - **Labels:** data
 - **Owner (build):** architect owns `src/db/schema.ts`; mobile-dev owns everything else in `src/` (repositories, migration wiring, seeding function, tests)
