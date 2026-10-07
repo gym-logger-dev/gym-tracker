@@ -97,6 +97,59 @@ describe('session (AC2, AC10)', () => {
   });
 });
 
+describe('untrusted input is rejected, never thrown on', () => {
+  const garbage = ['garbage', '', '2026-13-45T99:00:00.000Z', null, 5, undefined, {}, [], true];
+  const consent = {
+    ...common,
+    type: 'health_data',
+    policy_version: 'v1',
+    granted_at: '2026-10-04T10:00:00.000Z',
+  };
+
+  it.each(garbage)('session started_at %j', (value) => {
+    const run = () => SessionSchema.safeParse({ ...session, started_at: value });
+    expect(run).not.toThrow();
+    expect(run().success).toBe(false);
+  });
+
+  it.each(garbage)('session ended_at %j', (value) => {
+    const run = () => SessionSchema.safeParse({ ...session, ended_at: value });
+    expect(run).not.toThrow();
+    // null and undefined mean "no end time" (valid); everything else is rejected.
+    expect(run().success).toBe(value === null || value === undefined);
+  });
+
+  it.each(garbage)('session session_date %j', (value) => {
+    const run = () => SessionSchema.safeParse({ ...session, session_date: value });
+    expect(run).not.toThrow();
+    expect(run().success).toBe(false);
+  });
+
+  it('session with several bad fields at once', () => {
+    const run = () =>
+      SessionSchema.safeParse({
+        ...session,
+        started_at: 'garbage',
+        ended_at: 'garbage',
+        session_date: 'garbage',
+      });
+    expect(run).not.toThrow();
+    expect(run().success).toBe(false);
+  });
+
+  it.each(['garbage', '', '2026-13-45T99:00:00.000Z', 5, {}])('consent timestamps %j', (value) => {
+    for (const patch of [{ granted_at: value }, { withdrawn_at: value }]) {
+      const run = () => ConsentSchema.safeParse({ ...consent, ...patch });
+      expect(run).not.toThrow();
+      expect(run().success).toBe(false);
+    }
+  });
+
+  it('SessionSchema.parse throws a ZodError (not RangeError) on bad started_at', () => {
+    expect(() => SessionSchema.parse({ ...session, started_at: 'garbage' })).toThrow(z.ZodError);
+  });
+});
+
 describe('import_entry (AC5)', () => {
   it('keeps raw_sets null (cell absent) distinct from empty string (present and empty)', () => {
     const absent = ImportEntrySchema.parse({ ...importEntry, raw_sets: null });

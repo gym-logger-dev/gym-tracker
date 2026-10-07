@@ -42,7 +42,14 @@ const adelaideParts = new Intl.DateTimeFormat('en-CA', {
   day: '2-digit',
 });
 
-/** The Australia/Adelaide calendar day (`YYYY-MM-DD`) of an instant. Pure; independent of device timezone. */
+/** True when `v` is a valid `Timestamp` (use to guard refines: zod can run them after a field failed). */
+export const isTimestamp = (v: unknown): v is string => Timestamp.safeParse(v).success;
+
+/**
+ * The Australia/Adelaide calendar day (`YYYY-MM-DD`) of an instant. Pure; independent of device timezone.
+ * Throws `RangeError` on an invalid timestamp (programmer error): validate untrusted input with
+ * `Timestamp` / `isTimestamp` first. The schemas do so; `v5Names` does not call this function.
+ */
 export function adelaideDate(iso: string): string {
   const parts = adelaideParts.formatToParts(new Date(iso));
   const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';

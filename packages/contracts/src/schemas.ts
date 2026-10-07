@@ -17,6 +17,7 @@ import {
   Uuid,
   WeightKg,
   adelaideDate,
+  isTimestamp,
   nullableCol,
 } from './primitives';
 
@@ -56,11 +57,19 @@ export const SessionSchema = z
     source: z.enum(SESSION_SOURCES),
     ...tombstone,
   })
-  .refine((s) => s.ended_at === null || Date.parse(s.ended_at) >= Date.parse(s.started_at), {
-    path: ['ended_at'],
-    message: 'ended_at must not be before started_at',
-  })
-  .refine((s) => s.session_date === adelaideDate(s.started_at), {
+  // Refines may run after a field failed, so they only judge valid timestamps and never throw.
+  .refine(
+    (s) =>
+      s.ended_at === null ||
+      !isTimestamp(s.ended_at) ||
+      !isTimestamp(s.started_at) ||
+      Date.parse(s.ended_at) >= Date.parse(s.started_at),
+    {
+      path: ['ended_at'],
+      message: 'ended_at must not be before started_at',
+    },
+  )
+  .refine((s) => !isTimestamp(s.started_at) || s.session_date === adelaideDate(s.started_at), {
     path: ['session_date'],
     message: 'session_date must equal the Australia/Adelaide date of started_at',
   });
