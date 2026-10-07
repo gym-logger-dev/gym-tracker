@@ -65,3 +65,8 @@ exception · disagreement between agents that the lead cannot resolve with the p
 - `npm run test`, `npm run lint`, `npm run typecheck`
 - `supabase start` / `supabase test db` — local backend and RLS tests
 - `npx expo start` — dev server
+
+## PR hygiene (Sev, 2026-10-07)
+- Never open a new docs PR while an earlier docs PR is unmerged. Add to the open one instead.
+- Run `gh pr merge` as a standalone command, never chained with other commands.
+- Agent memory under `.claude/` is read-only by design. Standing rules live in this file; propose changes as an open item.
