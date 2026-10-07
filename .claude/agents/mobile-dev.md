@@ -11,7 +11,7 @@ hooks:
     - matcher: "Edit|Write|NotebookEdit"
       hooks:
         - type: command
-          command: "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-paths.sh 'app/*' 'src/*' '!src/ui/theme/*' '!src/db/schema.ts' 'package.json' 'package-lock.json' 'app.config.ts' 'babel.config.js' 'metro.config.js' 'tsconfig.json'"
+          command: "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-paths.sh 'app/*' 'src/*' '!src/ui/theme/*' '!src/db/schema.ts' 'package.json' 'package-lock.json' 'app.config.ts' 'babel.config.js' 'metro.config.js' 'tsconfig.json' 'eslint.config.js' 'jest.config.js' '.prettierrc' '.prettierignore'"
   Stop:
     - hooks:
         - type: command
