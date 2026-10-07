@@ -10,7 +10,7 @@
 As Sev, I want to sign in with an email magic link, so that my data is tied to my account and protected by row-level security without a password to manage.
 
 ## Scope (one PR, target < 350 lines)
-Supabase JS client configured from public env values (URL and anon key via `EXPO_PUBLIC_*`, local stack values only); sign-in screen (email entry, "check your email" state); deep link handler for the magic link; session persisted in secure storage; sign-out in Settings. Against LOCAL Supabase only (links read in the local Inbucket mail viewer). Apple and Google sign-in are STORY-011.
+Supabase JS client configured from public env values (URL and anon key via `EXPO_PUBLIC_*`, local stack values only); sign-in screen (email entry, "check your email" state); deep link handler for the magic link; session persisted in secure storage; sign-out in Settings. Against LOCAL Supabase only (links read in the local Inbucket mail viewer). Email-only sign-in is Sev's decision (2026-10-07): no Apple, Google or other provider auth and no anonymous mode, so there is no "try before sign-in" (ADR-0002 D14: sign in before first use).
 
 ## Acceptance criteria
 1. Given the local stack and the app signed out, when Sev enters a valid email and taps "Send link", then the app shows "Check your email" and the local mail viewer receives one message.
@@ -26,6 +26,8 @@ Supabase JS client configured from public env values (URL and anon key via `EXPO
 11. Logging: no email address, token or auth URL is written to console or logs in production builds; asserted by a test spying on `console`.
 12. No service-role key anywhere in the app bundle; a CI grep test fails on `service_role`. Only local anon key placeholders in docs (no keys committed; repo is PUBLIC).
 13. R7: sign-in copy is neutral, en-AU spelling, no health claims.
+14. Given no session (first launch, after sign-out, or after account deletion), when any route other than sign-in and the magic-link deep-link handler is opened (tabs, Settings, direct deep link), then the app redirects to sign-in and renders no app screen or data (component test on the route guard).
+15. Given the sign-in screen, when inspected, then it offers only the email field and "Send link": no provider buttons and no "continue without account" option.
 
 ## Technical notes (architect)
 - Needs ADR: yes. ADR "Auth client": secure storage adapter, deep-link scheme and redirect URLs (local and later remote), token refresh behaviour offline, new dependencies (`@supabase/supabase-js`, `expo-secure-store`, `expo-linking`).

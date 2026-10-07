@@ -35,13 +35,21 @@ Still open: OI-017. Its defaults apply and are marked "default, OI-017 open" bel
 | 21 | STORY-023 | CI hardening for P1 gate | data, needs-sev | Draft | 001, 004, 009, 016; needs Sev's approval label |
 | 22 | STORY-017 | Runbook: remote Supabase + prod import | data, migration, needs-sev | Draft (WAIT) | 015, 016; Sev executes |
 | 23 | STORY-022 | Quick Log sparkline (optional) | ui | Draft; P3 (default, OI-017 open) | 021 |
-| 24 | STORY-011 | Apple/Google sign-in | auth, ui, needs-sev | Draft; deferred to P2 (default, OI-017 open) | 010; OI-004, Sev |
-| 25 | STORY-024 | P1 phase gate | data, auth, needs-sev | Draft | 000-023 (011, 017, 022 may be deferred); Sev sign-off |
+| 24 | STORY-024 | P1 phase gate | data, auth, needs-sev | Draft | 000-023 except 011 (Dropped); 017, 022 may be deferred; Sev sign-off |
+
+## P2 (proposed, not in P1 order)
+
+| ID | Title | Labels | Status | Depends on |
+|---|---|---|---|---|
+| STORY-025 | Account deletion (in-app, purges server and device data) | auth, data, ui, needs-sev | Draft; phase placement is a scope question for Sev (dev-plan lists deletion at P5) | 006, 007, 008, 009, 010; ADR deletion path |
+
+## Dropped
+- STORY-011 Apple/Google sign-in: Dropped (Sev 2026-10-07: email-only sign-in). File kept for traceability.
 
 ## Defaults pending OI-017 (default, OI-017 open)
 - Dev build is Android-only in P1 (iOS dev build deferred).
 - On-device data in P1 is synthetic fixtures only.
 - Sparkline (STORY-022) is P3.
-- Apple/Google sign-in (STORY-011) is deferred.
+- (Resolved by Sev 2026-10-07: sign-in is email only; STORY-011 dropped.)
 
 Critical path: 001 -> 002; 001 -> 005 -> 006-008 -> 009; ADR-0003 -> 012 -> 013 -> Quick Log.

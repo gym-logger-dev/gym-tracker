@@ -1,6 +1,7 @@
 # STORY-011: Auth: Sign in with Apple and Google
 
-- **Status:** Draft (deferrable to P2; blocked on Sev account actions and OI-004)
+- **Status:** Dropped (Sev 2026-10-07: email-only sign-in)
+- **Reason (kept for traceability only; do not build):** Sev decided sign-in is email magic link only (STORY-010); no Apple or Google provider sign-in, so no Apple Developer Program dependency from this story. Source: docs/OPEN_ITEMS.md OI-016 follow-up, docs/HANDOFF.md.
 - **Phase / workstream / obligations:** P1 (deferrable) · W1 · R9 (Apple requires Sign in with Apple when other third-party sign-in is offered; account deletion is P5)
 - **Labels:** auth, ui, needs-sev
 - **Owner (build):** mobile-dev

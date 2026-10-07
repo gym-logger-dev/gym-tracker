@@ -29,7 +29,7 @@ Run `/phase-gate P1`. The report lists each criterion, the evidence (command out
 - Data/contract changes: none.
 
 ## Dependencies
-- Depends on: STORY-000 to STORY-023 (STORY-011, STORY-017 and STORY-022 may be deferred by Sev; criterion 1 needs OI-003 supplied).
+- Depends on: STORY-000 to STORY-023 except STORY-011 (Dropped, Sev 2026-10-07) (STORY-017 and STORY-022 may be deferred by Sev; criterion 1 needs OI-003 supplied).
 
 ## Design (ux-designer)
 - Spec: docs/design/STORY-024.md
