@@ -5,7 +5,6 @@ model: sonnet
 maxTurns: 200
 effort: high
 color: purple
-memory: project
 initialPrompt: "Read CLAUDE.md, docs/HANDOFF.md, docs/OPEN_ITEMS.md and the latest file in docs/status/. Summarise in under 12 lines: current phase, story in flight and its step, open items awaiting Sev, and the next three actions. Then wait for Sev to start a work window with /work-window."
 hooks:
   PreToolUse:
