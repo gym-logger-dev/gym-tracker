@@ -1,9 +1,9 @@
 # STORY-013: Drizzle local schema mirroring the server model
 
-- **Status:** Draft (ADR-0002 approved; still blocked on STORY-012 and ADR-0003 for SQLCipher, key storage and UUID library)
+- **Status:** Ready, start only after Sev confirms assumption (d) sign-in before first use (OI-016); also waits for STORY-012 and ADR-0003 (SQLCipher, key storage, UUID library)
 - **Phase / workstream / obligations:** P1 · W1 · R3
 - **Labels:** data
-- **Owner (build):** mobile-dev (`src/db/schema.ts` authored by architect)
+- **Owner (build):** architect owns `src/db/schema.ts`; mobile-dev owns everything else in `src/` (repositories, migration wiring, seeding function, tests)
 - **Branch:** story/STORY-013-drizzle-local-schema
 
 ## User story
@@ -15,7 +15,7 @@ Drizzle schema in `src/db/schema.ts` for exercise, variant, gym, session, set (`
 ## Acceptance criteria
 1. Given the schema, when compared with `packages/contracts` types by a unit test, then field names, nullability and UUID primary keys match for every table in scope.
 2. Given a fresh install, when the app starts, then local migrations run once, create the tables, and bump `schema_version`; a second start runs nothing.
-3. Given repository helpers, when a set row is inserted with a client-generated UUID, then it can be read back with kg values to 2 decimals exactly (1.25 stays 1.25; unit test with 1.25, 2.5, 100).
+3. Given repository helpers, when a set row is inserted with a client-generated UUID, then it can be read back with kg values to 3 decimals exactly (ADR-0002 D3 rounding helper; unit test with 1.25, 2.5, 100 and 22.125).
 4. Given the dev seeding function and the synthetic fixture bundle, when called, then rows load in one transaction; calling it twice yields no duplicates (idempotent via the same deterministic IDs).
 5. Given the seeding function is called in a production build, when invoked, then it is disabled (`__DEV__` guard tested) so fixtures cannot reach a real install.
 6. Error: Given invalid data (weight < 0), when inserted, then a validation error is thrown and nothing is written.
@@ -27,7 +27,7 @@ Drizzle schema in `src/db/schema.ts` for exercise, variant, gym, session, set (`
 ## Technical notes (architect)
 - ADR-0002 (approved) fixes the model and the contracts/schema consistency check (D14). Needs ADR: yes, a dependency ADR (ADR-0003 for SQLCipher/key storage/UUID library, per ADR-0001 D7) covering `drizzle-orm` / `drizzle-kit`.
 - Data/contract changes: new local tables only.
-- Gap to raise: how imported history reaches the phone before P2 sync exists (see report, Open questions).
+- Known gap: imported history cannot reach the phone before P2 sync exists. In P1 the device holds synthetic fixture data only (default, OI-017 open); the P2 sync story owns the delivery of real history.
 
 ## Dependencies
 - Depends on: STORY-005, STORY-012.

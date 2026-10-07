@@ -10,7 +10,7 @@
 As Sev, I want a report proving every one of my 811 Notion entries is in the new database with the same sets, so that I can trust the migration before retiring Notion.
 
 ## Scope (one PR, target < 300 lines excluding tests)
-`npm run import:reconcile -- --dir <path>` compares the source CSV with the database after import and writes `data/import/reports/reconciliation-<timestamp>.json` and `.md` (gitignored). Checks: entry counts, per-entry set counts, per-set weight and reps, exercise count (expect 46 on real data), variant and gym coverage, warnings and `needs_review` entries. Only an aggregate summary with counts (no names, weights, dates) may be pasted into PRs or the gate report.
+Location and ownership of the importer code are decided in ADR-0004; the `import:reconcile` script lives in the root `package.json` (mobile-dev per ADR-0001 D9), so until ADR-0004 is accepted any `package.json` edit goes through mobile-dev via the lead. Fixtures use the path set by ADR-0004. `npm run import:reconcile -- --dir <path>` compares the source CSV with the database after import and writes `data/import/reports/reconciliation-<timestamp>.json` and `.md` (gitignored). Checks: entry counts, per-entry set counts, per-set weight and reps, exercise count (expect 46 on real data), variant and gym coverage, warnings and `needs_review` entries. Only an aggregate summary with counts (no names, weights, dates) may be pasted into PRs or the gate report.
 
 ## Acceptance criteria
 1. Given the synthetic fixtures imported by STORY-015, when reconcile runs, then it reports `entries_in = entries_out`, `sets_in = sets_out`, zero mismatches, exit code 0.
@@ -30,7 +30,7 @@ As Sev, I want a report proving every one of my 811 Notion entries is in the new
 - Needs Sev: CSV export (OI-003). Default while waiting: fixture evidence only; the P1 gate cannot pass without the real run.
 
 ## Dependencies
-- Depends on: STORY-015.
+- Depends on: STORY-015 (and ADR-0004 through it).
 
 ## Design (ux-designer)
 - Spec: docs/design/STORY-016.md

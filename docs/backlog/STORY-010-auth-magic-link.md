@@ -32,7 +32,7 @@ Supabase JS client configured from public env values (URL and anon key via `EXPO
 - Data/contract changes: none.
 
 ## Dependencies
-- Depends on: STORY-002, STORY-003, STORY-004, STORY-009.
+- Depends on: STORY-002, STORY-003, STORY-004, STORY-009, ADR auth client (ADR-0001 D7; ADR number assigned by the architect).
 
 ## Design (ux-designer)
 - Spec: docs/design/STORY-010.md

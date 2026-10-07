@@ -13,6 +13,13 @@ As Sev, I want the approved data model mirrored as shared zod schemas and TypeSc
 - `packages/contracts/` (npm workspace `@gym-tracker/contracts`, ADR-0001 D5): zod schemas and inferred types per ADR-0002 D15 for exercise, variant, gym, session, set, plan, plan_day, consent and `import_entry`, plus constants: UUIDv5 namespace `20448473-4ce0-4b10-a84a-4ab62677ea3a`, `import_entry` reason codes, source and consent enums, name-normalisation rules (D1). `body_scan` is not implemented (D12).
 - Status headers of `docs/adr/0001-toolchain-dependencies-layout.md` and `docs/adr/0002-core-data-model-and-id-conventions.md` change from Proposed to Accepted, citing OI-016 (Sev, 2026-10-07).
 - The architect confirms the importer ADR number (ADR-0004, per `docs/backlog/README.md`) and references it where the importer is mentioned.
+- ADR-0002 errata (architect). Clarifications are fixed in the ADRs by the architect; anything that would change a decision goes to the lead as an open item (`/raise-question`), not into the ADR. Items to resolve:
+  1. D9 gives `import_entry` no `updated_at`, but D2 says every table has one and AC1 of this story expects it: state the exception or add the column.
+  2. D13 gives `import_entry` a select-only policy, yet `reviewed_at` is updatable (D9, STORY-016 AC5): state who sets `reviewed_at` and through which role (privileged local role vs an `authenticated` update policy).
+  3. STORY-017 AC5 (remove one import batch for rollback) conflicts with D9 (`import_entry` rows are removed only by account-deletion cascade): state whether a privileged batch purge is allowed.
+  4. D1 session v5 name uses `<source>` (`notion_import`) while `import_entry.source_system` is `notion_csv`: pin which value feeds the session name and that the two are intentionally different.
+  5. Numbering and placement: the importer ADR is ADR-0004 (README); the UUID library, secure random and SQLCipher dependencies are ADR-0003 (ADR-0002 follow-up 2) but ADR-0001 follow-up 5 names ADR-0003 for SQLCipher only. Make the two ADRs consistent on where the UUID library is decided.
+  6. D10 is silent on empty segments in the Sets cell (`45x10,,8`); STORY-014 AC7 assumes they are `unparsed_token`: confirm or correct.
 - No ADR needed (ADR-0002 exists). Choosing the zod version by `npm view` and the runtime-dependency note follow ADR-0001 D3 and D7 and are recorded in the PR.
 
 ## Acceptance criteria

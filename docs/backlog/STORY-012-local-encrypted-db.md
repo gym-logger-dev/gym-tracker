@@ -28,7 +28,7 @@ Open an encrypted `expo-sqlite` database with SQLCipher enabled, generate a rand
 - Data/contract changes: none server-side.
 
 ## Dependencies
-- Depends on: STORY-002.
+- Depends on: STORY-002, ADR-0003 (SQLCipher, key storage, secure random and UUID library).
 
 ## Design (ux-designer)
 - Spec: docs/design/STORY-012.md

@@ -2,7 +2,8 @@
 
 - **Status:** Ready (ADR-0001 approved 2026-10-07; start after STORY-001 merges)
 - **Phase / workstream / obligations:** P1 · W1 · R7 (wellness-only wording in all UI copy)
-- **Labels:** ui
+- **Labels:** ui, needs-sev
+- **Needs Sev approval label (sev-approved):** this PR touches `app.config.ts`, which `.github/workflows/merge-gate.yml` guards; `merge-gate` blocks until Sev applies `sev-approved` himself. The lead does not merge before that.
 - **Owner (build):** mobile-dev
 - **Branch:** story/STORY-002-expo-app-shell
 

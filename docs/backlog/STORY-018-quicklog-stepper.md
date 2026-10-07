@@ -17,7 +17,7 @@ A presentational `Stepper` component (value, step, min, onChange, unit label) an
 2. Given step sizes, when the picker is shown, then exactly 1, 1.25, 2.5 and 5 kg are offered; default is 2.5 (Quick Log baseline default to be confirmed by ux-designer against the existing artifact).
 3. Given repeated 1.25 steps (100 taps up then 100 down), when computed, then the value returns to the start exactly (no floating-point drift; unit test uses integer-hundredths arithmetic).
 4. Given value 0 (or `min`), when "-" is tapped, then the value stays at `min` and "-" is shown disabled; negative values are impossible.
-5. Given reps, when "+" or "-" is tapped, then it changes by 1 with minimum 0 (or 1 per ux spec) and no upper overflow below 999.
+5. Given reps, when "+" or "-" is tapped, then it changes by 1 with minimum 0 (or 1 per ux spec) and maximum 1000 (ADR-0002 D3: reps check 0 to 1000); at 1000, "+" is disabled.
 6. Given long-press on "+" or "-", when held, then the value repeats at a steady rate (or the PR states it is not part of the baseline and omits it).
 7. Given the display, when a value is shown, then it uses up to 2 decimals without trailing zeros (42.5, 40, 1.25) and en-AU number formatting.
 8. Accessibility: each button has a VoiceOver/TalkBack label ("Increase weight by 2.5 kilograms"), touch targets are at least 44 pt (theme token), and the current value is announced on change.

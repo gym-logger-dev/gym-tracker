@@ -1,6 +1,6 @@
 # STORY-014: Notion importer: Sets text parser (`45x10, 9, 8`)
 
-- **Status:** Draft (grammar per ADR-0002 D10 approved with ADR-0002 on 2026-10-07; still blocked on the importer-location ADR; real-format extensions wait for OI-003)
+- **Status:** Draft (grammar per ADR-0002 D10, approved with ADR-0002 (OI-016); still blocked on ADR-0004 (importer location); real-format extensions wait for OI-003)
 - **Phase / workstream / obligations:** P1 · W1 · R3
 - **Labels:** data, migration
 - **Owner (build):** backend-dev
@@ -19,7 +19,7 @@ A pure, side-effect-free function `parseSets(text): { sets: {order, weightKg, re
 4. Given an empty or whitespace-only string, when parsed, then zero sets, no error and the reason `empty_sets` (valid "no sets" entry, flagged `needs_review` and listed in the report by STORY-016).
 5. Given a token that does not match the grammar (e.g. `"45x10, abc, 8"`), when parsed, then the unknown token creates no set, a warning `unparsed_token` with the token position is returned, the carried weight resets to null, and the remaining readable tokens are still parsed: the result is (45, 10) and (null, 8) plus `unparsed_token` and `no_weight`, and the caller marks the entry `needs_review`. A weight is never carried across an unknown token. Also covers `45lb`, `BW`, `8-10` and `40x8x3` as unknown tokens.
 6. Given a leading reps-only token (`"10, 9"` with no weight), when parsed, then a warning "no weight" is returned and sets carry `weightKg = null` (bodyweight/unknown) rather than 0.
-7. Given any input, when parsed, then no token is lost: `sets.length` plus the count of `unparsed_token` warnings equals the number of tokens (property-style test over 50 generated strings).
+7. Given any input, when parsed, then no token is lost: `sets.length` plus the count of `unparsed_token` warnings equals the number of tokens (property-style test over 50 generated strings). Tokens are the comma-separated segments; an empty segment from a doubled or trailing comma (`"45x10,,8"`, `"45x10,"`) counts as one token, creates no set, raises `unparsed_token` with its position and resets the carried weight (default pending architect confirmation: ADR-0002 D10 does not mention empty segments). A whitespace-only whole cell is AC4, not this rule.
 8. Given unit tests, when run, then every case above passes; the PR links ADR-0002 D10 as the grammar of record.
 9. Error: non-string input throws a typed error (no crash on `null`/`undefined`).
 10. Offline: pure function, no network. Fixtures are synthetic (repo is PUBLIC): no real exercise logs.
@@ -30,7 +30,7 @@ A pure, side-effect-free function `parseSets(text): { sets: {order, weightKg, re
 - Real-data formats beyond the example (units in lb, "BW", drop sets, "x" vs "×", ranges) are unknown until OI-003 is delivered; extend the parser only via new stories.
 
 ## Dependencies
-- Depends on: STORY-001, STORY-005.
+- Depends on: STORY-001, STORY-005, ADR-0004 (importer location and language).
 
 ## Design (ux-designer)
 - Spec: docs/design/STORY-014.md

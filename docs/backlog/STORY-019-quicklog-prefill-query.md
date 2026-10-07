@@ -15,10 +15,10 @@ A data function `getLastSessionSets(exerciseId, variantId?, gymId?)` over the lo
 ## Acceptance criteria
 1. Given an exercise with sessions on three dates, when the function runs, then it returns the sets of the most recent date, in set order.
 2. Given a variant is selected, when the function runs, then it prefers the last session with that same variant; if none, it falls back to the last session of the exercise (any variant) and marks `fallback: true`. (Fallback rule to be confirmed against the current Quick Log behaviour.)
-3. Given a gym is selected, when the function runs, then it prefers the same gym, falling back to any gym (`fallback: true`); Needs Sev confirmation if baseline differs (see report).
+3. Given a gym is selected, when the function runs, then it prefers the same gym, falling back to any gym (`fallback: true`). Default: same gym first; ux-designer checks this against the Quick Log baseline artifact, and any difference goes to the lead as an open item via `/raise-question` (not decided here).
 4. Given an exercise with no history, when it runs, then it returns an empty list and `prefillFor` returns `{ weightKg: null, reps: null }` (the stepper shows placeholders).
-5. Given two sessions on the same date (e.g. morning and evening), when it runs, then the later `started_at` wins.
-6. Given soft-deleted sets (`deleted_at` set), when it runs, then they are ignored.
+5. Ordering of "most recent session": by `session_date` descending, then `started_at` descending, then session id descending as a deterministic but arbitrary final tie-break. Given two sessions on the same date (e.g. morning and evening), then the later `started_at` wins. Given an imported session (starts 00:00 Adelaide, ADR-0002 D7) and a Quick Log session on the same date, then the Quick Log session wins (later `started_at`). Given two imported sessions on the same date at different gyms (both 00:00), then the same-gym preference of AC3 applies first; if no gym is selected, the id tie-break applies and the result is identical on every run (test).
+6. Given soft-deleted sets or sessions (`deleted_at` set), when it runs, then they are ignored.
 7. Given 811 historical rows (fixture of equivalent size, synthetic), when it runs, then it returns in under 50 ms on the test device profile (benchmark in unit test with a generous bound, informational).
 8. Given another user's rows in the local DB (after sign-out/sign-in as different user), when it runs, then they are never returned (user scoping test).
 9. Offline: purely local; a test asserts no network calls.

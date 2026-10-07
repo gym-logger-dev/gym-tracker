@@ -30,7 +30,7 @@ Assemble STORY-018 (steppers), STORY-019 (pre-fill) and STORY-020 (selectors) in
 ## Technical notes (architect)
 - ADR-0002 D8 (approved) defines the implicit session, its `source` value and how it maps to the P2 session UI. No further ADR needed.
 - Data/contract changes: none beyond STORY-007.
-- Gap: imported history reaches the phone only after P2 sync; for P1 the device shows fixture data (see report, Open questions).
+- Known gap: imported history reaches the phone only after P2 sync; in P1 the device shows synthetic fixture data only (default, OI-017 open).
 
 ## Dependencies
 - Depends on: STORY-018, STORY-019, STORY-020, STORY-010 (user id), STORY-013.

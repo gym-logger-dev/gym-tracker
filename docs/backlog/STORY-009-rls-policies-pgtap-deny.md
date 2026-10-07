@@ -2,8 +2,9 @@
 
 - **Status:** Ready (sequence after STORY-006 to STORY-008; no ADR needed, rule is fixed by the dev-plan: `user_id = auth.uid()`)
 - **Phase / workstream / obligations:** P1 · W1 · R6 (no sharing beyond the owner), R2 (consent rows protected), R5 (breach risk K5)
-- **Labels:** data, auth, migration
-- **Owner (build):** backend-dev (policy migration authored by architect; pgTAP tests owned by qa-engineer in `supabase/tests/`)
+- **Labels:** data, auth, migration, needs-sev
+- **Needs Sev approval label (sev-approved):** this PR touches `supabase/migrations/`, which `.github/workflows/merge-gate.yml` guards; `merge-gate` blocks until Sev applies `sev-approved` himself.
+- **Owner (build):** architect authors the policy migration in `supabase/migrations/*`; qa-engineer authors the pgTAP suite in `supabase/tests/*`. backend-dev: no part (no Edge Function work here).
 - **Branch:** story/STORY-009-rls-policies-pgtap-deny
 
 ## User story
@@ -32,7 +33,7 @@ One migration adding, per table (exercise, variant, gym, session, set, import_en
 - Data/contract changes: policy migration only.
 
 ## Dependencies
-- Depends on: STORY-006, STORY-007, STORY-008.
+- Depends on: STORY-004, STORY-006, STORY-007, STORY-008.
 
 ## Design (ux-designer)
 - Spec: docs/design/STORY-009.md
