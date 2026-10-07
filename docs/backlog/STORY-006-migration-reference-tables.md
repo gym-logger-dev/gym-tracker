@@ -1,6 +1,6 @@
 # STORY-006: Migration: exercise, variant, gym tables
 
-- **Status:** Draft (blocked until STORY-005 / ADR-0002 merged)
+- **Status:** Ready (ADR-0002 approved 2026-10-07)
 - **Phase / workstream / obligations:** P1 · W1 · R3 (structured, exportable data)
 - **Labels:** data, migration
 - **Owner (build):** backend-dev (migration file authored by architect: `supabase/migrations/` is architect-owned)

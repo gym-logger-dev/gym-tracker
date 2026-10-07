@@ -1,6 +1,6 @@
 # STORY-013: Drizzle local schema mirroring the server model
 
-- **Status:** Draft (blocked until STORY-005 / ADR-0002 and STORY-012)
+- **Status:** Draft (ADR-0002 approved; still blocked on STORY-012 and ADR-0003 for SQLCipher, key storage and UUID library)
 - **Phase / workstream / obligations:** P1 · W1 · R3
 - **Labels:** data
 - **Owner (build):** mobile-dev (`src/db/schema.ts` authored by architect)
@@ -10,7 +10,7 @@
 As Sev, I want the phone's local tables to match the server model, so that Quick Log can read and write sets offline now and sync can be added in P2 without reshaping data.
 
 ## Scope (one PR, target < 300 lines excluding generated SQL)
-Drizzle schema in `src/db/schema.ts` for exercise, variant, gym, session, set (and the provenance table only if ADR-0002 requires it on device); generated local migration; typed repository helpers (create/read/list); a dev-only seeding function that loads a normalised JSON fixture bundle into local SQLite (for tests and demos). Not in scope: outbox, sync, plans, consent (P2/P4).
+Drizzle schema in `src/db/schema.ts` for exercise, variant, gym, session, set (`import_entry` is server-only and is NOT on the device, ADR-0002 D9); generated local migration; typed repository helpers (create/read/list); a dev-only seeding function that loads a normalised JSON fixture bundle into local SQLite (for tests and demos). Not in scope: outbox, sync, plans, consent (P2/P4).
 
 ## Acceptance criteria
 1. Given the schema, when compared with `packages/contracts` types by a unit test, then field names, nullability and UUID primary keys match for every table in scope.
@@ -22,10 +22,10 @@ Drizzle schema in `src/db/schema.ts` for exercise, variant, gym, session, set (a
 7. Empty: Given no data, when list helpers run, then they return empty arrays.
 8. Offline: all operations are local; a test asserts no network calls.
 9. No real names or personal data in fixtures (repo is PUBLIC): synthetic exercise names only (e.g. "Example Bench Press").
-10. User scoping: every local row stores `user_id` (nullable until sign-in per ADR-0002, or the signed-in user's id); behaviour documented and tested.
+10. User scoping (ADR-0002 D14): `user_id` is NOT NULL on every local table. Given no signed-in user, when a repository write is attempted, then it throws a typed error and nothing is written (the user signs in before first use; no anonymous local mode). Given a signed-in user, when a row is written, then it stores that user's id, and a unit test asserts the column is NOT NULL in the generated SQL.
 
 ## Technical notes (architect)
-- Needs ADR: yes, ADR-0002 for the model; a note in ADR on how the local schema is generated/verified against Postgres. Adds `drizzle-orm` / `drizzle-kit` (dependency ADR).
+- ADR-0002 (approved) fixes the model and the contracts/schema consistency check (D14). Needs ADR: yes, a dependency ADR (ADR-0003 for SQLCipher/key storage/UUID library, per ADR-0001 D7) covering `drizzle-orm` / `drizzle-kit`.
 - Data/contract changes: new local tables only.
 - Gap to raise: how imported history reaches the phone before P2 sync exists (see report, Open questions).
 

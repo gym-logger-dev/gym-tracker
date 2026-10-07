@@ -1,6 +1,6 @@
 # STORY-015: Notion importer: CSV to database mapping (idempotent, source line kept)
 
-- **Status:** Draft (blocked until STORY-005/007, STORY-014 and the importer ADR; real run also blocked on OI-003)
+- **Status:** Draft (ADR-0002 approved; still blocked on STORY-007, STORY-014 and the importer ADR; real run also blocked on OI-003)
 - **Phase / workstream / obligations:** P1 · W1 · R3, R6 (no personal data leaves Sev's PC)
 - **Labels:** data, migration
 - **Owner (build):** backend-dev
@@ -15,9 +15,10 @@ CLI (`npm run import:notion -- --dir <path> [--dry-run]`) that reads two CSVs, m
 ## Acceptance criteria
 1. Given the synthetic fixtures (e.g. 12 entries, 3 exercises, 2 gyms, 2 variants), when `--dry-run` runs, then nothing is written and the output states counts of entries, sessions and sets that would be created.
 2. Given the fixtures, when the import runs against the local stack, then every exercise, variant and gym appears once (no duplicates by case-insensitive name) and every entry becomes one or more `set` rows under a synthetic session per (date, gym) as decided in ADR-0002.
-3. Given each imported entry, when its provenance row is read, then it holds the original CSV row identifier and the raw `Sets` text unchanged (source line kept for every entry).
+3. Given each imported entry, when its `import_entry` row is read, then it holds the original CSV row identifier (`source_row_id`: the Notion page id if the export has one, else `row-<n>`, ADR-0002 D9) and the raw `Sets` text unchanged (source line kept for every entry).
 4. Given the import is run twice, when the second run completes, then row counts are identical (deterministic UUIDv5 from source row id and set order; no duplicates).
-5. Given a row with an unknown exercise name, missing date, or a `Sets` warning from the parser, when imported, then the row is NOT dropped: it is imported as far as parseable, flagged `needs_review` in the provenance row, and listed in the report (STORY-016).
+5. Given a row with an unknown exercise name, or a `Sets` warning from the parser, when imported, then the row is NOT dropped: it is imported as far as parseable, flagged `needs_review` with the matching reason codes (ADR-0002 D9) in its `import_entry` row, and listed in the report (STORY-016).
+5a. Given a row with a missing date, when imported, then an `import_entry` row is written (raw text kept, `needs_review = true`, reason `missing_date`, `session_id` null, `parsed_set_count` 0) and zero sessions and zero sets are created for it; no placeholder date is invented. A blank exercise name likewise creates an `import_entry` with `missing_exercise` and zero sets. The "811 in, 811 out" count is of `import_entry` rows.
 6. Given a malformed CSV (missing required column, bad encoding), when run, then the CLI exits non-zero before writing anything, naming the missing column.
 7. Given the importer target configuration, when it is not the local stack (any non-localhost DB URL), then it refuses to run unless `--i-know-this-is-not-local` is passed AND an environment flag set by Sev; agents never set it. Production import is STORY-017 (Sev only).
 8. Given the whole import, when it fails midway, then the transaction rolls back (all or nothing).

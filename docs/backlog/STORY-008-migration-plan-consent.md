@@ -1,6 +1,6 @@
 # STORY-008: Migration: plan, plan_day and consent tables
 
-- **Status:** Draft (blocked until STORY-005 / ADR-0002 merged)
+- **Status:** Ready (ADR-0002 approved 2026-10-07)
 - **Phase / workstream / obligations:** P1 · W4 (plan storage, used from P4), W1 · R2 (consent record shape), R3
 - **Labels:** data, migration
 - **Owner (build):** backend-dev (migration authored by architect)
