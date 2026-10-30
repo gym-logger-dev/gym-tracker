@@ -147,3 +147,12 @@ Consequences for the stories: STORY-001's `.gitignore` additions and the `.nvmrc
 - Harder: three pins (TypeScript 6, ESLint 9, Jest 29) are held back from npm `latest`, each for a documented peer-range reason. Revisit all three at each phase boundary and record the outcome in an ADR addendum; reversing is a version bump plus config fixes with no data impact.
 - Follow-ups: (1) Sev adds three or four filenames to the mobile-dev guard list (open item); (2) devops-release takes `.gitignore`, `.nvmrc` and `eas.json` work (the current `.gitignore` lacks `*.key` and SQLite/dump patterns required by STORY-001 criterion 4); (3) STORY-001 confirms Node 24 with `expo-doctor`; (4) product-owner updates STORY-001 and STORY-002 to this ADR (Node 24, `app.config.ts`, route tests in `src/__tests__/routes/`, dev build); (5) ADR-0003 (SQLCipher, key storage, `getRandomValues` polyfill) precedes STORY-012; ADR for the auth client precedes STORY-010.
 - Reversal: layout and alias are cheap to change early and expensive after P1; the SDK pin is reversible only forward (upgrade), not backward.
+
+## Addendum 2026-10-07 (architect, STORY-005): deviations in STORY-001
+
+The decisions above stand. STORY-001 (PRs #11 and #13) deviated from D3 as follows; this records it and does not rewrite it.
+
+- **tsconfig is standalone.** D3 says it extends `expo/tsconfig.base`. TypeScript 6 rejects `baseUrl`, and `expo/tsconfig.base` does not exist until the `expo` package is installed (STORY-002). STORY-002 must re-add `extends: expo/tsconfig.base` and re-verify the `@/*` path alias under TS 6.
+- **`eslint-config-expo/flat` is not used.** Its dependency chain pulls `unrs-resolver`, which has an install script that was not approved. `eslint.config.js` uses `typescript-eslint` alone. STORY-002 must re-add `eslint-config-expo/flat` and put the `unrs-resolver` install-script decision to Sev (security exception, per CLAUDE.md escalation rules).
+- **ESLint 9.39.5 is flagged unsupported by npm.** `npm install` prints "eslint@9.39.5: This version is no longer supported". The D3 pin (`~9.39.5`) is unchanged for now; revisit it at the next dependency review, when the ESLint 10 peer conflict in D3's evidence table can be re-checked.
+- **Follow-up 2 is now historical.** The `.gitignore` gap it describes (no `*.key`, SQLite or dump patterns) was closed by PR #13 (`c43d445`).
