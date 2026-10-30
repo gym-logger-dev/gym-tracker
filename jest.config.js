@@ -1,4 +1,6 @@
 /** @type {import('jest').Config} */
+const alias = { '^@/(.*)$': '<rootDir>/src/$1' };
+
 module.exports = {
   projects: [
     {
@@ -6,7 +8,14 @@ module.exports = {
       testEnvironment: 'node',
       preset: 'ts-jest',
       testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/packages/**/*.test.ts'],
-      moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
+      testPathIgnorePatterns: ['/node_modules/', '<rootDir>/src/__tests__/'],
+      moduleNameMapper: alias,
+    },
+    {
+      displayName: 'app',
+      preset: 'jest-expo',
+      testMatch: ['<rootDir>/src/__tests__/**/*.test.ts', '<rootDir>/src/**/*.test.tsx'],
+      moduleNameMapper: alias,
     },
   ],
 };

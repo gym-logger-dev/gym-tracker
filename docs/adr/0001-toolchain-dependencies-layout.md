@@ -156,3 +156,12 @@ The decisions above stand. STORY-001 (PRs #11 and #13) deviated from D3 as follo
 - **`eslint-config-expo/flat` is not used.** Its dependency chain pulls `unrs-resolver`, which has an install script that was not approved. `eslint.config.js` uses `typescript-eslint` alone. STORY-002 must re-add `eslint-config-expo/flat` and put the `unrs-resolver` install-script decision to Sev (security exception, per CLAUDE.md escalation rules).
 - **ESLint 9.39.5 is flagged unsupported by npm.** `npm install` prints "eslint@9.39.5: This version is no longer supported". The D3 pin (`~9.39.5`) is unchanged for now; revisit it at the next dependency review, when the ESLint 10 peer conflict in D3's evidence table can be re-checked.
 - **Follow-up 2 is now historical.** The `.gitignore` gap it describes (no `*.key`, SQLite or dump patterns) was closed by PR #13 (`c43d445`).
+
+## Addendum 2026-10-30 (architect, STORY-002 / PR #21): devDependencies and install-script policy
+
+D1 to D9 stand unchanged. This records what STORY-002 added or resolved beyond them.
+
+- **devDependencies beyond D3:** `react-dom@19.2.3`, `react-test-renderer@19.2.3`, `@types/react ~19.2.4`. Reason: expo-router's optional peer `react-dom: *` resolved to 19.3.1 and failed ERESOLVE against `react` 19.2.3; pinning is preferred to `--legacy-peer-deps` or `--force`. `react-dom` and `react-test-renderer` must move in lockstep with `react` (jest-expo pins `react-test-renderer` 19.2.3). No runtime, native, auth, network or storage impact; MIT.
+- **`ignore-scripts=true` is now repo-wide** in `.npmrc`, per Sev's decision on `unrs-resolver` (2026-10-30; closes the STORY-001 addendum item). `eslint-config-expo` is installed and its install script is never run; the resolver uses the prebuilt optional binding (verified on linux-x64 only; CI to confirm on its first run). Any future dependency that needs a lifecycle script is a security-exception open item for Sev.
+- **`expo/tsconfig.base` re-added** to `tsconfig.json` with `rootDir: "."` (without it ts-jest fails with TS5011). This closes the tsconfig item in the STORY-001 addendum.
+- **Transitive tree grew** from about 370 to about 1079 lockfile entries, including MPL-2.0 (`lightningcss`) and `node-forge` (BSD-3-Clause OR GPL-2.0). Flagged for devops-release licence triage under D7 item 5; no action taken here.

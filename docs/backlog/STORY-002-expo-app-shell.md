@@ -37,6 +37,16 @@ Expo SDK 57 (`expo ~57.0.x`, installed with `npx expo install`) project in the r
 ## Test evidence (qa-engineer)
 | Criterion | Test | Result |
 |---|---|---|
+| 1 Launch on Log, no red screen (dev build) | needs Android emulator | NOT CHECKED |
+| 2 strict, zero ts-ignore | `npm run typecheck` exit 0; `grep -rn ts-ignore app src packages` = 0; eslint ban-ts-comment probe errors on `@ts-ignore` | PASS |
+| 3 Tabs show title and empty state; back behaviour | route render tests pass (headings/bodies); on-device back behaviour needs emulator | PARTIAL (jest PASS, device NOT CHECKED) |
+| 4 Route tests, none under app/, alias and workspace import | `npm run test`: 6 suites, 101 tests pass (app project: routes.test.tsx, resolution.test.ts); `find app -name '*.test.*'` empty | PASS |
+| 5 Offline, no fetch on mount | routes.test.tsx fetch spy per route (3 tests) pass; grep fetch in app/ and src/ non-test code empty | PASS |
+| 6 Error boundary, Try again | routes.test.tsx (2 tests); probe: throwing tab inside real layout shows boundary, no exception text | PASS |
+| 7 R7 wording | 12 strings in app/, src/ui match docs/design/STORY-002.md section 8 exactly; no extras | PASS |
+| 8 No analytics, no secrets | package.json deps reviewed; app.config.ts has none | PASS |
+| 9 expo-doctor | `npx expo-doctor`: 21/21 checks passed | PASS |
+| Gate | `npm_config_ignore_scripts=true npm ci && npm run verify` at 4c6907b: lint, prettier, tsc, jest pass; verify:rls SKIPPED (no supabase/config.toml) | PASS |
 
 ## Review and compliance
 - Code review: VERDICT …
