@@ -40,6 +40,13 @@ As Sev, I want a Supabase project definition that runs entirely on my PC with `s
 ## Test evidence (qa-engineer)
 | Criterion | Test | Result |
 |---|---|---|
+| 1 | `supabase start` + `supabase status` | NOT CHECKED: Docker Desktop not running in WSL (`/usr/bin/docker` is a dangling symlink to `/mnt/wsl/docker-desktop/...`); `supabase test db` reports ECONNREFUSED 127.0.0.1:54322 |
+| 2 | `supabase db reset` | NOT CHECKED (no Docker) |
+| 3 | `supabase test db` with `supabase/tests/00-smoke.test.sql` | NOT CHECKED (no Docker). File added at 9173367 (plan 1, `ok(true)`, begin/rollback) |
+| 4 | CI `ci` check | NOT CHECKED: needs a PR run |
+| 5 | grep of `supabase/config.toml` for JWT, project ref, `sb_*` keys, emails; `git check-ignore` | PASS (partial): no JWT or ref; only matches are commented `admin_email` examples and `service_role` in a comment; secrets use `env(...)`; `supabase/.temp/` ignored (.gitignore:19). The env-file ignore pattern was not exercised (repo guard hook blocks touching those paths); pattern is present in .gitignore |
+| 6 | `npm run verify:rls` with stack down; with CLI off PATH | PASS: stack down exits 1 with `DbConnectError ... ECONNREFUSED 127.0.0.1:54322 ... Make sure Docker is running`; CLI absent exits 1 with `verify:rls FAILED: supabase CLI not runnable (ENOENT)`. Full `npm run verify` not run (no node_modules in worktree) |
+| 7 | offline start | NOT CHECKED |
 
 ## Review and compliance
 - Code review: VERDICT …
