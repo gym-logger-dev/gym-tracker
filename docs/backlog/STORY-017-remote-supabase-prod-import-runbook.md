@@ -23,6 +23,7 @@ A runbook under `docs/release/` (path to be confirmed with devops-release, who o
 
 ## Technical notes (architect)
 - Needs ADR: no.
+- AC5 rollback: ADR-0002 D9 "Batch purge carve-out" (OI-023 (a)): privileged local role only, one transaction (sets, then sessions created only by the batch, then `import_entry` rows), count-only log; never `authenticated`.
 - Needs Sev: Supabase account/project, production import. Default: WAIT; P1 can complete its gate on the local stack plus the real CSV, but production is only needed from P2 (sync).
 
 ## Dependencies
