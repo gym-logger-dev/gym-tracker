@@ -14,7 +14,7 @@ module.exports = {
     {
       displayName: 'app',
       preset: 'jest-expo',
-      testMatch: ['<rootDir>/src/__tests__/**/*.test.ts', '<rootDir>/src/__tests__/**/*.test.tsx'],
+      testMatch: ['<rootDir>/src/__tests__/**/*.test.ts', '<rootDir>/src/**/*.test.tsx'],
       moduleNameMapper: alias,
     },
   ],
